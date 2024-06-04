@@ -12,9 +12,7 @@
         v-if="mapboxSearchResults"
         class="absolute bg-weather-secondary text-white w-full shadow-md py-2 px-1 top-[66px]"
       >
-        <p class="py-2" v-if="searchError">
-          Sorry, something went wrong, please try again. 
-        </p>
+        <p class="py-2" v-if="searchError">Sorry, something went wrong, please try again.</p>
         <p class="py-2" v-if="!serverError && mapboxSearchResults.length === 0">
           No results match your query, try a different term
         </p>
@@ -30,19 +28,28 @@
         </template>
       </ul>
     </div>
+    <div class="flex flex-col gap-4">
+      <Suspense>
+        <CityList />
+        <template #fallback>
+          <p>Loading...</p>
+        </template>
+      </Suspense>
+    </div>
   </main>
 </template>
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import  {useRouter} from "vue-router"
+import { useRouter } from 'vue-router'
+import CityList from '../components/app-components/CityList.vue'
 
-const router = useRouter();
+const router = useRouter()
 const previewCity = (searchResult) => {
-  const [city, state] = searchResult.place_name.split(",");
+  const [city, state] = searchResult.place_name.split(',')
   router.push({
-    name: "cityView",
-    params: {state: state.replaceAll(" ", ""), city: city},
+    name: 'cityView',
+    params: { state: state.replaceAll(' ', ''), city: city },
     query: {
       lat: searchResult.geometry.coordinates[1],
       lng: searchResult.geometry.coordinates[0],
@@ -68,9 +75,9 @@ const getSearchResults = () => {
         )
         mapboxSearchResults.value = result.data.features
       } catch {
-        searchError.value = true;
+        searchError.value = true
       }
-      return;
+      return
     }
     mapboxSearchResults.value = null
   }, 300)
