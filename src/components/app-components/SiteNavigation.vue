@@ -16,6 +16,8 @@
         <font-awesome-icon
           :icon="['fas', 'plus']"
           class="text-xl hover:text-weather-primary duration-150 cursor-pointer"
+          @click="addCity"
+          v-if="route.query.preview"
         />
       </div>
 
@@ -52,12 +54,39 @@
 
 <script setup>
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { uid } from 'uid'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import BaseModal from './BaseModal.vue'
 
+const route = useRoute()
+const router = useRouter()
+const savedCities = ref([])
 const modalActive = ref(null)
 const toggleModal = () => {
   modalActive.value = !modalActive.value
+}
+
+const addCity = async () => {
+  if (localStorage.getItem('savedCities')) {
+    savedCities.value = JSON.parse(localStorage.getItem('savedCities'))
+  }
+
+  const locationObj = {
+    id: uid(),
+    state: route.params.state,
+    city: route.params.city,
+    coords: {
+      lat: route.query.lat,
+      lng: route.query.lng
+    }
+  }
+  savedCities.value.push(locationObj)
+  localStorage.setItem('savedCities', JSON.stringify(savedCities.value))
+
+  let query = Object.assign({}, route.query)
+
+  delete query.preview
+  router.replace({ query })
 }
 </script>
 
