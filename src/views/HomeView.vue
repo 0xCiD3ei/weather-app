@@ -32,7 +32,7 @@
       <Suspense>
         <CityList />
         <template #fallback>
-          <p>Loading...</p>
+          <CityCardSkeleton />
         </template>
       </Suspense>
     </div>
@@ -43,7 +43,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import CityList from '../components/app-components/CityList.vue'
-
+import CityCardSkeleton from '../components/app-components/CityCardSkeleton.vue'
 const router = useRouter()
 const previewCity = (searchResult) => {
   const [city, state] = searchResult.place_name.split(',')
